@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<IAutorRepository, AutorRepository>();
-builder.Services.AddScoped<IAutorService, AutorService>();
+builder.Services.AddScoped<IAutorService, AutorServiceCatalogoPublico>();
 builder.Services.AddScoped<ILibroRepository, LibroRepository>();
 builder.Services.AddScoped<ILibroService, LibroService>();
 builder.Services.AddScoped<IAlmacenamientoImagenes, AlmacenamientoImagenesLocal>();
