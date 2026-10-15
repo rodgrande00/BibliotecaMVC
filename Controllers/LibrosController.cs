@@ -44,6 +44,7 @@ public class LibrosController : Controller
     public async Task<IActionResult> Create(LibroFormViewModel formulario)
     {
         ValidarPortada(formulario.Imagen);
+        ValidarIsbnUnico(formulario.Libro);
 
         if (!ModelState.IsValid)
             return View(ConstruirFormulario(formulario.Libro));
@@ -70,6 +71,7 @@ public class LibrosController : Controller
 
         var portadaAnterior = libroExistente.ImagenNombre;
         ValidarPortada(formulario.Imagen);
+        ValidarIsbnUnico(formulario.Libro);
 
         if (!ModelState.IsValid)
         {
@@ -140,6 +142,12 @@ public class LibrosController : Controller
                 Selected = autor.Id == autorSeleccionadoId
             })
             .ToList();
+
+    private void ValidarIsbnUnico(Libro libro)
+    {
+        if (_libroService.IsbnYaRegistrado(libro.Isbn, libro.Id))
+            ModelState.AddModelError("Libro.Isbn", "Ya existe un libro con ese ISBN.");
+    }
 
     private void ValidarPortada(IFormFile? imagen)
     {

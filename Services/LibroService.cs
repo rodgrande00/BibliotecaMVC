@@ -26,4 +26,7 @@ public class LibroService : ILibroService
 
     public void EliminarLibro(int id) =>
         _libroRepository.Eliminar(id);
+
+    public bool IsbnYaRegistrado(string isbn, int idActual) =>
+        _libroRepository.ExisteOtroConMismoIsbn(isbn, idActual);
 }

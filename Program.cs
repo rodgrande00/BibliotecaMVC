@@ -1,10 +1,15 @@
+using BibliotecaMVC.Data;
 using BibliotecaMVC.Repositories;
 using BibliotecaMVC.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext<BibliotecaDbContext>(opciones =>
+    opciones.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IAutorRepository, AutorRepository>();
 builder.Services.AddScoped<IAutorService, AutorServiceCatalogoPublico>();
@@ -16,6 +21,14 @@ builder.Services.AddScoped<IAlmacenamientoImagenes, AlmacenamientoImagenesLocal>
 builder.Services.AddScoped<IContenidoPortalService, ContenidoPortalService>();
 
 var app = builder.Build();
+
+// Crea o actualiza solo las tablas de EF Core (Libros). Categorías sigue
+// atendiéndose con el script SQL y ADO.NET.
+using (var alcance = app.Services.CreateScope())
+{
+    var contexto = alcance.ServiceProvider.GetRequiredService<BibliotecaDbContext>();
+    contexto.Database.Migrate();
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

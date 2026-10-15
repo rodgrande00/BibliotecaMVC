@@ -9,4 +9,5 @@ public interface ILibroService
     void RegistrarLibro(Libro libro);
     void ActualizarLibro(Libro libro);
     void EliminarLibro(int id);
+    bool IsbnYaRegistrado(string isbn, int idActual);
 }

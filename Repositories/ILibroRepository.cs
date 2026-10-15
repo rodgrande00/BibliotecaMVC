@@ -9,4 +9,5 @@ public interface ILibroRepository
     void Agregar(Libro libro);
     void Actualizar(Libro libro);
     void Eliminar(int id);
+    bool ExisteOtroConMismoIsbn(string isbn, int idActual);
 }

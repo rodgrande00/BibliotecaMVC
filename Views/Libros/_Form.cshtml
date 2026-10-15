@@ -7,13 +7,13 @@
 <div class="row g-3">
     <div class="col-md-8">
         <label asp-for="Libro.Titulo" class="form-label"></label>
-        <input asp-for="Libro.Titulo" class="form-control" />
+        <input asp-for="Libro.Titulo" class="form-control" autofocus placeholder="Ej. Cien años de soledad" />
         <span asp-validation-for="Libro.Titulo" class="text-danger"></span>
     </div>
 
     <div class="col-md-4">
         <label asp-for="Libro.Isbn" class="form-label"></label>
-        <input asp-for="Libro.Isbn" class="form-control" />
+        <input asp-for="Libro.Isbn" class="form-control" placeholder="978-84-376-0494-7" />
         <span asp-validation-for="Libro.Isbn" class="text-danger"></span>
     </div>
 
