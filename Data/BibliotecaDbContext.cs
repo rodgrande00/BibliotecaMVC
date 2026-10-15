@@ -1,14 +1,15 @@
 using BibliotecaMVC.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace BibliotecaMVC.Data;
 
 /// <summary>
 /// Contexto de Entity Framework Core para SQL Server.
-/// Autores sigue en memoria y Categorías usa ADO.NET, así que este contexto
-/// solo modela Libros: AutorId se guarda como dato, sin relación a otra tabla.
+/// Incluye los usuarios de Identity y los libros. Autores sigue en memoria y
+/// Categorías usa ADO.NET, así que AutorId no tiene relación a otra tabla.
 /// </summary>
-public class BibliotecaDbContext : DbContext
+public class BibliotecaDbContext : IdentityDbContext
 {
     public BibliotecaDbContext(DbContextOptions<BibliotecaDbContext> opciones)
         : base(opciones)
@@ -19,6 +20,7 @@ public class BibliotecaDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
         ConfigurarLibro(modelBuilder);
     }
 

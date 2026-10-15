@@ -1,0 +1,56 @@
+@model RegistroViewModel
+@{
+    ViewData["Title"] = "Registrarse";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-5">
+        <section class="card shadow-sm tarjeta-acceso">
+            <div class="card-body p-4">
+                <h1 class="h3 mb-1">Crear cuenta</h1>
+                <p class="text-body-secondary mb-4">
+                    La contraseña necesita al menos 6 caracteres, una mayúscula, una minúscula y un número.
+                </p>
+
+                <form asp-action="Registro" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="NombreUsuario" class="form-label"></label>
+                        <input asp-for="NombreUsuario" class="form-control" autofocus autocomplete="username" />
+                        <span asp-validation-for="NombreUsuario" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Correo" class="form-label"></label>
+                        <input asp-for="Correo" class="form-control" autocomplete="email" />
+                        <span asp-validation-for="Correo" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Contrasena" class="form-label"></label>
+                        <input asp-for="Contrasena" class="form-control" autocomplete="new-password" />
+                        <span asp-validation-for="Contrasena" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="ConfirmarContrasena" class="form-label"></label>
+                        <input asp-for="ConfirmarContrasena" class="form-control" autocomplete="new-password" />
+                        <span asp-validation-for="ConfirmarContrasena" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Registrarse</button>
+                </form>
+
+                <p class="text-center mt-4 mb-0">
+                    ¿Ya tiene cuenta?
+                    <a asp-action="Login">Inicie sesión</a>
+                </p>
+            </div>
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

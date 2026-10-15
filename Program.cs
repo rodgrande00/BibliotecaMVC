@@ -1,6 +1,7 @@
 using BibliotecaMVC.Data;
 using BibliotecaMVC.Repositories;
 using BibliotecaMVC.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,25 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<BibliotecaDbContext>(opciones =>
     opciones.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services
+    .AddIdentity<IdentityUser, IdentityRole>(opciones =>
+    {
+        opciones.User.RequireUniqueEmail = true;
+        opciones.Password.RequiredLength = 6;
+        opciones.Password.RequireDigit = true;
+        opciones.Password.RequireUppercase = true;
+        opciones.Password.RequireLowercase = true;
+        opciones.Password.RequireNonAlphanumeric = false;
+    })
+    .AddEntityFrameworkStores<BibliotecaDbContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.ConfigureApplicationCookie(opciones =>
+{
+    opciones.LoginPath = "/Account/Login";
+    opciones.LogoutPath = "/Account/Logout";
+});
 
 builder.Services.AddScoped<IAutorRepository, AutorRepository>();
 builder.Services.AddScoped<IAutorService, AutorServiceCatalogoPublico>();
@@ -22,7 +42,7 @@ builder.Services.AddScoped<IContenidoPortalService, ContenidoPortalService>();
 
 var app = builder.Build();
 
-// Crea o actualiza solo las tablas de EF Core (Libros). Categorías sigue
+// Crea o actualiza las tablas de EF Core (Libros e Identity). Categorías sigue
 // atendiéndose con el script SQL y ADO.NET.
 using (var alcance = app.Services.CreateScope())
 {
@@ -41,6 +61,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();

@@ -1300,3 +1300,15 @@ a.etiqueta:focus-visible {
     break-inside: avoid;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Acceso: login y registro
+   -------------------------------------------------------------------------- */
+.tarjeta-acceso {
+  border: 0;
+  border-top: 4px solid var(--bs-primary);
+}
+
+.validation-summary-valid {
+  display: none;
+}
