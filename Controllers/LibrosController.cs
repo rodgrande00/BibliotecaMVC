@@ -1,11 +1,14 @@
 using BibliotecaMVC.Models;
 using BibliotecaMVC.Models.ViewModels;
+using BibliotecaMVC.Seguridad;
 using BibliotecaMVC.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BibliotecaMVC.Controllers;
 
+[Authorize(Roles = RolesBiblioteca.Consulta)]
 public class LibrosController : Controller
 {
     private const string SinAutor = "Autor no registrado";
@@ -36,10 +39,12 @@ public class LibrosController : Controller
         return libro is null ? NotFound() : View(MapearAVistaModelo(libro));
     }
 
+    [Authorize(Roles = RolesBiblioteca.Administrador)]
     public IActionResult Create() =>
         View(ConstruirFormulario(new Libro { Disponible = true }));
 
     [HttpPost]
+    [Authorize(Roles = RolesBiblioteca.Administrador)]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(LibroFormViewModel formulario)
     {
@@ -56,6 +61,7 @@ public class LibrosController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [Authorize(Roles = RolesBiblioteca.Administrador)]
     public IActionResult Edit(int id)
     {
         var libro = _libroService.ObtenerLibro(id);
@@ -63,6 +69,7 @@ public class LibrosController : Controller
     }
 
     [HttpPost]
+    [Authorize(Roles = RolesBiblioteca.Administrador)]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(LibroFormViewModel formulario)
     {
@@ -94,6 +101,7 @@ public class LibrosController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [Authorize(Roles = RolesBiblioteca.Administrador)]
     public IActionResult Delete(int id)
     {
         var libro = _libroService.ObtenerLibro(id);
@@ -101,6 +109,7 @@ public class LibrosController : Controller
     }
 
     [HttpPost, ActionName("Delete")]
+    [Authorize(Roles = RolesBiblioteca.Administrador)]
     [ValidateAntiForgeryToken]
     public IActionResult DeleteConfirmed(int id)
     {

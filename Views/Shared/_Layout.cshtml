@@ -70,8 +70,16 @@
                     <ul class="navbar-nav align-items-sm-center">
                         @if (User.Identity?.IsAuthenticated == true)
                         {
-                            <li class="nav-item">
-                                <span class="navbar-text me-sm-2">@User.Identity.Name</span>
+                            <li class="nav-item d-flex align-items-center gap-2 me-sm-2">
+                                <span class="navbar-text">@User.Identity.Name</span>
+                                @if (User.IsInRole(RolesBiblioteca.Administrador))
+                                {
+                                    <span class="badge text-bg-primary">Administrador</span>
+                                }
+                                else if (User.IsInRole(RolesBiblioteca.Lector))
+                                {
+                                    <span class="badge text-bg-secondary">Lector</span>
+                                }
                             </li>
                             <li class="nav-item">
                                 <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">

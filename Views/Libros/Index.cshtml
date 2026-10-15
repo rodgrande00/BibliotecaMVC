@@ -5,14 +5,17 @@
 
 <div class="d-flex justify-content-between align-items-center mb-2">
     <h1 class="mb-0">Gestión de Libros</h1>
-    <a asp-action="Create" class="btn btn-success">Nuevo libro</a>
+    @if (User.IsInRole(RolesBiblioteca.Administrador))
+    {
+        <a asp-action="Create" class="btn btn-success">Nuevo libro</a>
+    }
 </div>
 <p class="text-body-secondary mb-4">@Model.Count() libros registrados.</p>
 
 @if (!Model.Any())
 {
     <div class="alert alert-info" role="alert">
-        Todavía no hay libros registrados. Use el botón <strong>Nuevo libro</strong> para agregar el primero.
+        Todavía no hay libros registrados.
     </div>
 }
 else
@@ -41,8 +44,11 @@ else
                     <div class="card-footer bg-transparent">
                         <div class="btn-group btn-group-sm" role="group" aria-label="Acciones de @libro.Titulo">
                             <a asp-action="Details" asp-route-id="@libro.Id" class="btn btn-outline-info">Ver</a>
-                            <a asp-action="Edit" asp-route-id="@libro.Id" class="btn btn-outline-primary">Editar</a>
-                            <a asp-action="Delete" asp-route-id="@libro.Id" class="btn btn-outline-danger">Eliminar</a>
+                            @if (User.IsInRole(RolesBiblioteca.Administrador))
+                            {
+                                <a asp-action="Edit" asp-route-id="@libro.Id" class="btn btn-outline-primary">Editar</a>
+                                <a asp-action="Delete" asp-route-id="@libro.Id" class="btn btn-outline-danger">Eliminar</a>
+                            }
                         </div>
                     </div>
                 </article>

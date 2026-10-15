@@ -1,5 +1,6 @@
 using BibliotecaMVC.Data;
 using BibliotecaMVC.Repositories;
+using BibliotecaMVC.Seguridad;
 using BibliotecaMVC.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +30,7 @@ builder.Services.ConfigureApplicationCookie(opciones =>
 {
     opciones.LoginPath = "/Account/Login";
     opciones.LogoutPath = "/Account/Logout";
+    opciones.AccessDeniedPath = "/Account/AccesoDenegado";
 });
 
 builder.Services.AddScoped<IAutorRepository, AutorRepository>();
@@ -49,6 +51,8 @@ using (var alcance = app.Services.CreateScope())
     var contexto = alcance.ServiceProvider.GetRequiredService<BibliotecaDbContext>();
     contexto.Database.Migrate();
 }
+
+await InicializadorIdentidad.PrepararAsync(app.Services);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
