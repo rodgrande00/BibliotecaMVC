@@ -5,8 +5,9 @@ using Microsoft.EntityFrameworkCore;
 namespace BibliotecaMVC.Repositories;
 
 /// <summary>
-/// Persistencia de libros con Entity Framework Core. Mostrar consulta el DbSet
-/// y agregar usa Add más SaveChanges. No usa ADO.NET.
+/// Persistencia de libros con Entity Framework Core. Mostrar consulta el DbSet,
+/// agregar usa Add, editar usa Find y Update, eliminar usa Find y Remove.
+/// Todos confirman con SaveChanges. No usa ADO.NET.
 /// </summary>
 public class LibroRepository : ILibroRepository
 {
@@ -34,7 +35,11 @@ public class LibroRepository : ILibroRepository
 
     public void Actualizar(Libro libro)
     {
-        _contexto.Libros.Update(libro);
+        var existente = _contexto.Libros.Find(libro.Id);
+        if (existente is null) return;
+
+        CopiarDatos(existente, libro);
+        _contexto.Libros.Update(existente);
         _contexto.SaveChanges();
     }
 
@@ -49,4 +54,15 @@ public class LibroRepository : ILibroRepository
 
     public bool ExisteOtroConMismoIsbn(string isbn, int idActual) =>
         _contexto.Libros.Any(libro => libro.Isbn == isbn && libro.Id != idActual);
+
+    private static void CopiarDatos(Libro destino, Libro origen)
+    {
+        destino.Titulo = origen.Titulo;
+        destino.Isbn = origen.Isbn;
+        destino.AutorId = origen.AutorId;
+        destino.AnioPublicacion = origen.AnioPublicacion;
+        destino.Genero = origen.Genero;
+        destino.Disponible = origen.Disponible;
+        destino.ImagenNombre = origen.ImagenNombre;
+    }
 }

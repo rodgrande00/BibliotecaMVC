@@ -7,7 +7,7 @@
     <h1 class="mb-0">Gestión de Libros</h1>
     <a asp-action="Create" class="btn btn-success">Nuevo libro</a>
 </div>
-<p class="text-body-secondary mb-4">@Model.Count() registrados en la base de datos.</p>
+<p class="text-body-secondary mb-4">@Model.Count() libros registrados.</p>
 
 @if (!Model.Any())
 {
@@ -38,10 +38,12 @@ else
                             <span class="badge bg-danger">Prestado</span>
                         }
                     </div>
-                    <div class="card-footer bg-transparent d-flex gap-1">
-                        <a asp-action="Details" asp-route-id="@libro.Id" class="btn btn-sm btn-info">Ver</a>
-                        <a asp-action="Edit" asp-route-id="@libro.Id" class="btn btn-sm btn-primary">Editar</a>
-                        <a asp-action="Delete" asp-route-id="@libro.Id" class="btn btn-sm btn-danger">Eliminar</a>
+                    <div class="card-footer bg-transparent">
+                        <div class="btn-group btn-group-sm" role="group" aria-label="Acciones de @libro.Titulo">
+                            <a asp-action="Details" asp-route-id="@libro.Id" class="btn btn-outline-info">Ver</a>
+                            <a asp-action="Edit" asp-route-id="@libro.Id" class="btn btn-outline-primary">Editar</a>
+                            <a asp-action="Delete" asp-route-id="@libro.Id" class="btn btn-outline-danger">Eliminar</a>
+                        </div>
                     </div>
                 </article>
             </div>

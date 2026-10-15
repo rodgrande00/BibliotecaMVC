@@ -27,15 +27,21 @@
                     <dt class="col-sm-4">ISBN</dt>
                     <dd class="col-sm-8">@Model.Isbn</dd>
 
+                    <dt class="col-sm-4">Género</dt>
+                    <dd class="col-sm-8">@Model.Genero</dd>
+
                     <dt class="col-sm-4">Año de publicación</dt>
                     <dd class="col-sm-8">@Model.AnioPublicacion</dd>
+
+                    <dt class="col-sm-4">Estado</dt>
+                    <dd class="col-sm-8">@(Model.Disponible ? "Disponible" : "Prestado")</dd>
                 </dl>
             </div>
         </div>
     </div>
 </div>
 
-<form asp-action="Delete" method="post" class="d-flex gap-2 mt-4">
+<form asp-action="Delete" method="post" class="d-flex flex-wrap gap-2 mt-4">
     <input type="hidden" asp-for="Id" />
     <button type="submit" class="btn btn-danger">Sí, eliminar</button>
     <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
