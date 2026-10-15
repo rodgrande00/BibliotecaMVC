@@ -10,6 +10,8 @@ builder.Services.AddScoped<IAutorRepository, AutorRepository>();
 builder.Services.AddScoped<IAutorService, AutorServiceCatalogoPublico>();
 builder.Services.AddScoped<ILibroRepository, LibroRepository>();
 builder.Services.AddScoped<ILibroService, LibroService>();
+builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
+builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 builder.Services.AddScoped<IAlmacenamientoImagenes, AlmacenamientoImagenesLocal>();
 builder.Services.AddScoped<IContenidoPortalService, ContenidoPortalService>();
 

@@ -1,0 +1,23 @@
+@model Categoria
+@{
+    ViewData["Title"] = "Nueva categoría";
+}
+
+<h1 class="mb-4">Nueva categoría</h1>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <form asp-action="Create" method="post">
+            <partial name="_Form" model="Model" />
+
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-success">Guardar</button>
+                <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

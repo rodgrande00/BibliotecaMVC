@@ -28,10 +28,6 @@ public class HomeController : Controller
         return View(modelo);
     }
 
-    public IActionResult Categorias()
-    {
-        return View();
-    }
 
     public IActionResult Usuarios()
     {
