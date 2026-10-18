@@ -39,12 +39,12 @@ public class LibrosController : Controller
         return libro is null ? NotFound() : View(MapearAVistaModelo(libro));
     }
 
-    [Authorize(Roles = RolesBiblioteca.Administrador)]
+    [Authorize(Roles = RolesBiblioteca.Modificacion)]
     public IActionResult Create() =>
         View(ConstruirFormulario(new Libro { Disponible = true }));
 
     [HttpPost]
-    [Authorize(Roles = RolesBiblioteca.Administrador)]
+    [Authorize(Roles = RolesBiblioteca.Modificacion)]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(LibroFormViewModel formulario)
     {
@@ -61,7 +61,7 @@ public class LibrosController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    [Authorize(Roles = RolesBiblioteca.Administrador)]
+    [Authorize(Roles = RolesBiblioteca.Modificacion)]
     public IActionResult Edit(int id)
     {
         var libro = _libroService.ObtenerLibro(id);
@@ -69,7 +69,7 @@ public class LibrosController : Controller
     }
 
     [HttpPost]
-    [Authorize(Roles = RolesBiblioteca.Administrador)]
+    [Authorize(Roles = RolesBiblioteca.Modificacion)]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(LibroFormViewModel formulario)
     {
@@ -101,7 +101,7 @@ public class LibrosController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    [Authorize(Roles = RolesBiblioteca.Administrador)]
+    [Authorize(Roles = RolesBiblioteca.Modificacion)]
     public IActionResult Delete(int id)
     {
         var libro = _libroService.ObtenerLibro(id);
@@ -109,7 +109,7 @@ public class LibrosController : Controller
     }
 
     [HttpPost, ActionName("Delete")]
-    [Authorize(Roles = RolesBiblioteca.Administrador)]
+    [Authorize(Roles = RolesBiblioteca.Modificacion)]
     [ValidateAntiForgeryToken]
     public IActionResult DeleteConfirmed(int id)
     {

@@ -36,11 +36,17 @@
                                aria-current="@(EsActual("Home", "Index") ? "page" : null)"
                                asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark @(EsActual("Libros", "Index") ? "active fw-semibold" : null)"
-                               aria-current="@(EsActual("Libros", "Index") ? "page" : null)"
-                               asp-area="" asp-controller="Libros" asp-action="Index">Libros</a>
-                        </li>
+                        @if (User.Identity?.IsAuthenticated != true
+                            || User.IsInRole(RolesBiblioteca.Usuario)
+                            || User.IsInRole(RolesBiblioteca.Bibliotecario)
+                            || User.IsInRole(RolesBiblioteca.Admin))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark @(EsActual("Libros", "Index") ? "active fw-semibold" : null)"
+                                   aria-current="@(EsActual("Libros", "Index") ? "page" : null)"
+                                   asp-area="" asp-controller="Libros" asp-action="Index">Libros</a>
+                            </li>
+                        }
                         <li class="nav-item">
                             <a class="nav-link text-dark @(EsActual("Autores", "Index") ? "active fw-semibold" : null)"
                                aria-current="@(EsActual("Autores", "Index") ? "page" : null)"
@@ -72,13 +78,17 @@
                         {
                             <li class="nav-item d-flex align-items-center gap-2 me-sm-2">
                                 <span class="navbar-text">@User.Identity.Name</span>
-                                @if (User.IsInRole(RolesBiblioteca.Administrador))
+                                @if (User.IsInRole(RolesBiblioteca.Admin))
                                 {
-                                    <span class="badge text-bg-primary">Administrador</span>
+                                    <span class="badge text-bg-primary">Admin</span>
                                 }
-                                else if (User.IsInRole(RolesBiblioteca.Lector))
+                                else if (User.IsInRole(RolesBiblioteca.Bibliotecario))
                                 {
-                                    <span class="badge text-bg-secondary">Lector</span>
+                                    <span class="badge text-bg-primary">Bibliotecario</span>
+                                }
+                                else if (User.IsInRole(RolesBiblioteca.Usuario))
+                                {
+                                    <span class="badge text-bg-secondary">Usuario</span>
                                 }
                             </li>
                             <li class="nav-item">

@@ -5,12 +5,18 @@
 
 <div class="d-flex justify-content-between align-items-center mb-2">
     <h1 class="mb-0">Gestión de Libros</h1>
-    @if (User.IsInRole(RolesBiblioteca.Administrador))
+    @if (User.IsInRole(RolesBiblioteca.Admin) || User.IsInRole(RolesBiblioteca.Bibliotecario))
     {
         <a asp-action="Create" class="btn btn-success">Nuevo libro</a>
     }
 </div>
 <p class="text-body-secondary mb-4">@Model.Count() libros registrados.</p>
+@if (User.IsInRole(RolesBiblioteca.Usuario)
+    && !User.IsInRole(RolesBiblioteca.Admin)
+    && !User.IsInRole(RolesBiblioteca.Bibliotecario))
+{
+    <p class="text-body-secondary">Su rol permite consultar el catálogo. Agregar, editar y eliminar corresponde a Bibliotecario y Admin.</p>
+}
 
 @if (!Model.Any())
 {
@@ -44,7 +50,7 @@ else
                     <div class="card-footer bg-transparent">
                         <div class="btn-group btn-group-sm" role="group" aria-label="Acciones de @libro.Titulo">
                             <a asp-action="Details" asp-route-id="@libro.Id" class="btn btn-outline-info">Ver</a>
-                            @if (User.IsInRole(RolesBiblioteca.Administrador))
+                            @if (User.IsInRole(RolesBiblioteca.Admin) || User.IsInRole(RolesBiblioteca.Bibliotecario))
                             {
                                 <a asp-action="Edit" asp-route-id="@libro.Id" class="btn btn-outline-primary">Editar</a>
                                 <a asp-action="Delete" asp-route-id="@libro.Id" class="btn btn-outline-danger">Eliminar</a>

@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Identity;
 namespace BibliotecaMVC.Seguridad;
 
 /// <summary>
-/// Crea los roles de la biblioteca y asegura un usuario de cada nivel.
-/// Si el usuario ya existe, solo le asigna el rol que le falta.
+/// Crea Admin, Bibliotecario y Usuario solo si no existen, y asigna
+/// un rol a cada cuenta de prueba sin duplicar la asignación.
 /// </summary>
 public static class InicializadorIdentidad
 {
@@ -14,13 +14,16 @@ public static class InicializadorIdentidad
         var roles = alcance.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
         var usuarios = alcance.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
 
-        await AsegurarRolAsync(roles, RolesBiblioteca.Lector);
-        await AsegurarRolAsync(roles, RolesBiblioteca.Administrador);
+        await AsegurarRolAsync(roles, RolesBiblioteca.Usuario);
+        await AsegurarRolAsync(roles, RolesBiblioteca.Bibliotecario);
+        await AsegurarRolAsync(roles, RolesBiblioteca.Admin);
 
         await AsegurarUsuarioAsync(
-            usuarios, "lector", "lector@biblioteca.test", "Biblioteca1", RolesBiblioteca.Lector);
+            usuarios, "lector", "lector@biblioteca.test", "Biblioteca1", RolesBiblioteca.Usuario);
         await AsegurarUsuarioAsync(
-            usuarios, "admin", "admin@biblioteca.test", "Biblioteca1", RolesBiblioteca.Administrador);
+            usuarios, "bibliotecario", "bibliotecario@biblioteca.test", "Biblioteca1", RolesBiblioteca.Bibliotecario);
+        await AsegurarUsuarioAsync(
+            usuarios, "admin", "admin@biblioteca.test", "Biblioteca1", RolesBiblioteca.Admin);
     }
 
     private static async Task AsegurarRolAsync(RoleManager<IdentityRole> roles, string nombre)
