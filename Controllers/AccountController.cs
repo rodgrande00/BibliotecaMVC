@@ -10,13 +10,16 @@ public class AccountController : Controller
 
     private readonly SignInManager<IdentityUser> _signInManager;
     private readonly UserManager<IdentityUser> _userManager;
+    private readonly ILogger<AccountController> _logger;
 
     public AccountController(
         SignInManager<IdentityUser> signInManager,
-        UserManager<IdentityUser> userManager)
+        UserManager<IdentityUser> userManager,
+        ILogger<AccountController> logger)
     {
         _signInManager = signInManager;
         _userManager = userManager;
+        _logger = logger;
     }
 
     [HttpGet]
@@ -65,7 +68,14 @@ public class AccountController : Controller
     }
 
     [HttpGet]
-    public IActionResult AccesoDenegado() => View();
+    public IActionResult AccesoDenegado()
+    {
+        _logger.LogWarning(
+            "Acceso denegado para {Usuario} al intentar {Ruta}.",
+            User.Identity?.Name ?? "anónimo",
+            Request.Query["ReturnUrl"].ToString());
+        return View();
+    }
 
     [HttpPost]
     [ValidateAntiForgeryToken]

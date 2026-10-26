@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using BibliotecaMVC.Models;
 using BibliotecaMVC.Models.ViewModels;
@@ -9,10 +10,12 @@ namespace BibliotecaMVC.Controllers;
 public class HomeController : Controller
 {
     private readonly IContenidoPortalService _contenidoPortal;
+    private readonly ILogger<HomeController> _logger;
 
-    public HomeController(IContenidoPortalService contenidoPortal)
+    public HomeController(IContenidoPortalService contenidoPortal, ILogger<HomeController> logger)
     {
         _contenidoPortal = contenidoPortal;
+        _logger = logger;
     }
 
     public IActionResult Index()
@@ -55,6 +58,10 @@ public class HomeController : Controller
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
+        var excepcion = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
+        if (excepcion?.Error is not null)
+            _logger.LogError(excepcion.Error, "Error no controlado al procesar {Ruta}.", excepcion.Path);
+
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }

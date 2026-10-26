@@ -16,46 +16,62 @@ public class LibrosController : Controller
     private readonly ILibroService _libroService;
     private readonly IAutorService _autorService;
     private readonly IAlmacenamientoImagenes _almacenamientoImagenes;
+    private readonly ILogger<LibrosController> _logger;
 
     public LibrosController(
         ILibroService libroService,
         IAutorService autorService,
-        IAlmacenamientoImagenes almacenamientoImagenes)
+        IAlmacenamientoImagenes almacenamientoImagenes,
+        ILogger<LibrosController> logger)
     {
         _libroService = libroService;
         _autorService = autorService;
         _almacenamientoImagenes = almacenamientoImagenes;
+        _logger = logger;
     }
 
     public IActionResult Index()
     {
+        _logger.LogInformation("Inicio de la consulta del listado de libros.");
         var libros = _libroService.ListarLibros().Select(MapearAVistaModelo).ToList();
+        _logger.LogInformation("Consulta de libros finalizada. Total: {Total}.", libros.Count);
         return View(libros);
     }
 
     public IActionResult Details(int id)
     {
+        _logger.LogInformation("Inicio de la consulta del libro {LibroId}.", id);
         var libro = _libroService.ObtenerLibro(id);
-        return libro is null ? NotFound() : View(MapearAVistaModelo(libro));
+        if (libro is null) return LibroNoEncontrado(id, "consultar");
+
+        return View(MapearAVistaModelo(libro));
     }
 
     [Authorize(Roles = RolesBiblioteca.Modificacion)]
-    public IActionResult Create() =>
-        View(ConstruirFormulario(new Libro { Disponible = true }));
+    public IActionResult Create()
+    {
+        _logger.LogInformation("Inicio del formulario para agregar un libro.");
+        return View(ConstruirFormulario(new Libro { Disponible = true }));
+    }
 
     [HttpPost]
     [Authorize(Roles = RolesBiblioteca.Modificacion)]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(LibroFormViewModel formulario)
     {
+        _logger.LogInformation("Inicio del registro del libro {Titulo}.", formulario.Libro.Titulo);
         ValidarPortada(formulario.Imagen);
         ValidarIsbnUnico(formulario.Libro);
 
         if (!ModelState.IsValid)
+        {
+            _logger.LogWarning("No se registró el libro {Titulo} porque los datos no son válidos.", formulario.Libro.Titulo);
             return View(ConstruirFormulario(formulario.Libro));
+        }
 
         formulario.Libro.ImagenNombre = await GuardarPortadaAsync(formulario.Imagen) ?? string.Empty;
         _libroService.RegistrarLibro(formulario.Libro);
+        _logger.LogInformation("Libro {Titulo} registrado con id {LibroId}.", formulario.Libro.Titulo, formulario.Libro.Id);
         TempData["Mensaje"] = $"Libro \"{formulario.Libro.Titulo}\" agregado correctamente.";
 
         return RedirectToAction(nameof(Index));
@@ -64,8 +80,11 @@ public class LibrosController : Controller
     [Authorize(Roles = RolesBiblioteca.Modificacion)]
     public IActionResult Edit(int id)
     {
+        _logger.LogInformation("Inicio de la edición del libro {LibroId}.", id);
         var libro = _libroService.ObtenerLibro(id);
-        return libro is null ? NotFound() : View(ConstruirFormulario(libro));
+        if (libro is null) return LibroNoEncontrado(id, "editar");
+
+        return View(ConstruirFormulario(libro));
     }
 
     [HttpPost]
@@ -73,8 +92,9 @@ public class LibrosController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(LibroFormViewModel formulario)
     {
+        _logger.LogInformation("Inicio del guardado de cambios del libro {LibroId}.", formulario.Libro.Id);
         var libroExistente = _libroService.ObtenerLibro(formulario.Libro.Id);
-        if (libroExistente is null) return NotFound();
+        if (libroExistente is null) return LibroNoEncontrado(formulario.Libro.Id, "guardar la edición");
 
         var portadaAnterior = libroExistente.ImagenNombre;
         ValidarPortada(formulario.Imagen);
@@ -82,8 +102,7 @@ public class LibrosController : Controller
 
         if (!ModelState.IsValid)
         {
-            // Sin esto el formulario volvería mostrando la portada genérica
-            // en lugar de la que el libro ya tiene guardada.
+            _logger.LogWarning("No se actualizó el libro {LibroId} porque los datos no son válidos.", formulario.Libro.Id);
             formulario.Libro.ImagenNombre = portadaAnterior;
             return View(ConstruirFormulario(formulario.Libro));
         }
@@ -92,6 +111,7 @@ public class LibrosController : Controller
         formulario.Libro.ImagenNombre = portadaNueva ?? portadaAnterior;
 
         _libroService.ActualizarLibro(formulario.Libro);
+        _logger.LogInformation("Libro {LibroId} actualizado.", formulario.Libro.Id);
 
         if (portadaNueva is not null)
             _almacenamientoImagenes.Eliminar(portadaAnterior);
@@ -104,8 +124,11 @@ public class LibrosController : Controller
     [Authorize(Roles = RolesBiblioteca.Modificacion)]
     public IActionResult Delete(int id)
     {
+        _logger.LogInformation("Inicio de la confirmación para eliminar el libro {LibroId}.", id);
         var libro = _libroService.ObtenerLibro(id);
-        return libro is null ? NotFound() : View(MapearAVistaModelo(libro));
+        if (libro is null) return LibroNoEncontrado(id, "eliminar");
+
+        return View(MapearAVistaModelo(libro));
     }
 
     [HttpPost, ActionName("Delete")]
@@ -113,10 +136,12 @@ public class LibrosController : Controller
     [ValidateAntiForgeryToken]
     public IActionResult DeleteConfirmed(int id)
     {
+        _logger.LogInformation("Inicio de la eliminación del libro {LibroId}.", id);
         var libro = _libroService.ObtenerLibro(id);
-        if (libro is null) return NotFound();
+        if (libro is null) return LibroNoEncontrado(id, "eliminar");
 
         _libroService.EliminarLibro(id);
+        _logger.LogInformation("Libro {LibroId} eliminado.", id);
         _almacenamientoImagenes.Eliminar(libro.ImagenNombre);
         TempData["Mensaje"] = $"Libro \"{libro.Titulo}\" eliminado correctamente.";
 
@@ -151,6 +176,12 @@ public class LibrosController : Controller
                 Selected = autor.Id == autorSeleccionadoId
             })
             .ToList();
+
+    private IActionResult LibroNoEncontrado(int id, string operacion)
+    {
+        _logger.LogWarning("No se encontró el libro {LibroId} al {Operacion}.", id, operacion);
+        return NotFound();
+    }
 
     private void ValidarIsbnUnico(Libro libro)
     {
